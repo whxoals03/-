@@ -1,0 +1,103 @@
+#include <stdio.h> // 레벨을 입력받아서 총 노드의 개수를 출력해야댐 식은 2^n 
+
+// 부모 노드 구하기
+int get_parent(int index) {
+    if (index == 1) return -1;
+    return index / 2;
+}
+
+// 왼쪽 자식 구하기
+int get_left_child(int index, int size) {
+    int child = index * 2;
+    if (child > size) return -1;
+    return child;
+}
+
+// 오른쪽 자식 구하기
+int get_right_child(int index, int size) {
+    int child = index * 2 + 1;
+    if (child > size) return -1;
+    return child;
+}
+
+// 트리 높이 구하기
+int get_height(int n) {
+    int height = 0, nodes = 1;
+    while (nodes <= n) {
+        height++;
+        nodes *= 2;
+    }
+    return height;
+}
+
+// 2^n 두번째 리프식 
+int leaf_of_two(int n) {
+    int result = 1;
+    for (int i = 0; i < n; i++) result *= 2;
+    return result;
+}
+
+// 리프 노드 수
+int get_leaf_count(int height) {
+    return leaf_of_two(height - 1);
+}
+
+int main() {
+    int size;
+    printf("트리 배열 크기 입력: ");
+    scanf("%d", &size);
+
+    if (size <= 0) {
+        printf("크기는 1 이상이어야 합니다.\n");
+        return 0;
+    }
+
+    char Tree[size + 1];
+
+    // A~Z 반복해서 트리에 저장
+    for (int i = 1; i <= size; i++) {
+        Tree[i] = 'A' + (i - 1) % 26;
+    }
+
+    printf("알파벳 노드 입력 (예: A~Z): ");
+    char input;
+    scanf(" %c", &input);
+
+
+    for (int i = 1; i <= size; i++) {
+        if (Tree[i] == input) {
+            printf("\nindex [%d] '%c'\n", i, Tree[i]);
+
+            // 부모
+            int parent = get_parent(i);
+            if (parent == -1)
+                printf("부모: 없음\n");
+            else
+                printf("부모: index [%d]의 '%c'\n", parent, Tree[parent]);
+
+            // 왼쪽 자식
+            int left = get_left_child(i, size);
+            if (left == -1)
+                printf("왼쪽 자식: 없음\n");
+            else
+                printf("왼쪽 자식(n*2): index [%d]의 '%c'\n", left, Tree[left]);
+
+            // 오른쪽 자식
+            int right = get_right_child(i, size);
+            if (right == -1)
+                printf("오른쪽 자식: 없음\n");
+            else
+                printf("오른쪽 자식(n*2+1): index [%d]의 '%c'\n", right, Tree[right]);
+        }
+    }
+
+    // 트리 높이와 리프 수 출력
+    int height = get_height(size);
+    int leaf_count = get_leaf_count(height);
+
+    printf("\n트리의 높이,레벨 = %d\n", height);
+    printf("리프 노드 수 = %d\n", leaf_count);
+    printf("총 노드의 개수 = %d\n", size);
+
+    return 0;
+}
