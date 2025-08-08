@@ -1,0 +1,112 @@
+#include <stdio.h> // 이름없음11의 코드 참고 
+//다익스트라 알고리즘 : 그래프의 최단 경로 계산 표를 작성 
+#define MAX 100 //시작은 입력받지만 결국 도달하는 노드는 끝노드로 정해져 있음 
+
+int v, e;
+int graph[MAX][MAX]; //표의 데이터를 입력받음 
+int route[MAX]; // 경로를 표시합 
+int visit[MAX]; // 0이면 확정되지 않은 데이터, 1이면 확정된 데이터 
+
+// graph 1 2 3 4 5 6
+// route 0 x x x x x
+// visit 0 0 0 0 0 0
+ 
+void Dykstra_graph(int start) { //함수 다이스트라 알고리즘 
+    for (int i=1; i<=v; i++) { //입력받은 노드의 개수로 반복문 
+    	route[i] = MAX; // 경로는 처음에 무한 값으로 채움 
+    	visit[i] = 0; //방문 여부는 처음에 0으로 값을 채움 
+	} //해당 반복문은 한번만 햇갈림 방지 
+	
+	route[start] = 0; //경로[시작 값] 은 0으로 시작 / 예시 : 1은 0으로 시작  
+
+    for (int i = 1; i <= v; i++) { //이중반복문 노드의 갯수만큼 돌거다 
+        int min_route = MAX; // min_route는 거쳐가는 값임 / 시작시 무한값을 넣고 시작 
+        int u = -1; // -1은 이 노드가 이동하는데 더이상 이동할 수 없다면 종료됨 
+
+		//해당 반복문은 코드를 더 이상 이동할 수 없는지 판단하는 반복문임 -1 -> 1로 바꿀수 있는지 판단하는 
+        for (int j = 1; j <= v; j++) { //j는 더했을때 최소값을 찾음 / 예시 : 1 2 [5], 1 4 [2]라는 식의 입력이었으면 1 4 [2]가 우선적으로 선택되는 구조 
+            if (!visit[j] && route[j] < min_route) { // 방문의 여부가 0이고, 경로와 min_route를 비교했을때 성립하는지 판단 
+                min_route = route[j]; // 위의 if가 성립하면 min_route에 값을 대입 / 추가적인 값이 있으면 갱신되면서 결국 최소값을 찾게되고 그 값으로 
+                u = j;                // 프로그램 돌아감 1 4 [2]로 나중에 1 2 [5]는 후순위 
+            	// if가 성립하면 1로 수정해서 프로그램의 종료하지 않음 
+			}
+        }
+
+        if (u == -1) break;  // 위의 반복문에서 값이 -1로 남으면 종료 
+        visit[u] = 1; // break이 실행되지 않으면 방문여부를 1로 설정 
+
+        for (int k = 1; k <= v; k++) { //route의 값을 갱신해주는 반복문 
+            if (!visit[k] && graph[u][k] != MAX) { // 방문의 여부가 0이고, 그래프의 값이 있으면 성립 
+                if (route[k] > route[u] + graph[u][k]) { // 만약 덧샘의 값이 기존의 route값 보다 작다면  
+                    route[k] = route[u] + graph[u][k];
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int a, b, w; // 시작 끝 대입값 
+    printf("노드 개수와 간선 개수 입력: ");
+    scanf("%d %d", &v, &e); // 노드의 개수, 간선의 개수 
+
+    // 그래프를 초기화
+    for (int i = 1; i <= v; i++) {
+        for (int j = 1; j <= v; j++) {
+            if (i == j) {
+				graph[i][j] = 0;
+			} else {
+				graph[i][j] = MAX;
+			}
+        }
+    }
+
+    printf("간선 입력 (시작 끝 대입값):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d %d %d", &a, &b, &w);
+        graph[a][b] = w;  // 단방향 그래프
+    }
+
+    int start;
+    printf("시작 노드 입력: ");
+    scanf("%d", &start);
+
+    Dykstra_graph(start); // 다익스트라 함수 호출 
+
+    printf("\n== 최단 거리 결과 ==\n");
+    for (int i = 1; i <= v; i++) {
+        if (route[i] == MAX) 
+			printf("%d: 도달 불가\n", i);
+        else printf("%d: %d\n", i, route[i]);
+    }
+
+    return 0;
+}
+/*
+6 11
+1 2 2
+1 3 5
+1 4 1
+2 3 3
+2 4 2
+3 2 3
+3 6 5
+4 3 3
+4 5 1
+5 3 1
+5 6 2
+1
+ 그래프를 입력으로 만들고  
+ 표의 노드번호는 두고 거리는 무한으로 채움 
+ 
+ // graph 1 2 3 4 5 6
+ // route 0 x x x x x
+ // visit 0 0 0 0 0 0
+ 
+ visit은 방문 여부를 판단 1이면 그 데이터는 확정된 데이터, 0이면 그 데이터는 확정되지 않은 데이터
+ route는 표의 최종 값들을 만들어가는 과정임 1부터 시작이면 0을 넣고 시작
+  
+  
+ 
+  
+*/
