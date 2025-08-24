@@ -1,0 +1,103 @@
+#include <stdio.h> // 함수 한개 
+//4 7 3 10 8 5 1 2 9 6 100 
+#define MAX 100
+
+void quicksort(int a[], int n)
+{
+    int Lstack[MAX];
+    int Rstack[MAX];
+    int top = -1;
+
+    if (n <= 1)
+    {
+        return;
+    }
+
+    top++;
+    Lstack[top] = 0;
+    Rstack[top] = n - 1;
+
+    while (top >= 0)
+    {
+        int left = Lstack[top];
+        int right = Rstack[top];
+        top--;
+
+        while (left < right)
+        {
+            int i = left - 1;
+            int j = right + 1;
+            int pivot = a[(left + right) / 2];
+
+            while (1)
+            {
+                do
+                {
+                    i++;
+                } while (a[i] < pivot);
+
+                do
+                {
+                    j--;
+                } while (a[j] > pivot);
+
+                if (i >= j)
+                {
+                    break;
+                }
+
+                int t = a[i];
+                a[i] = a[j];
+                a[j] = t;
+            }
+
+            if ((j - left) < (right - (j + 1)))
+            {
+                top++;
+                Lstack[top] = j + 1;
+                Rstack[top] = right;
+                right = j;
+            }
+            else
+            {
+                top++;
+                Lstack[top] = left;
+                Rstack[top] = j;
+                left = j + 1;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int a[MAX];
+    int n = 0;
+
+    while (1)
+    {
+        if (scanf("%d", &a[n]) != 1)
+        {
+            break;
+        }
+        if (a[n] == 100)
+        {
+            break;
+        }
+        n++;
+        if (n >= MAX)
+        {
+            break;
+        }
+    }
+
+    quicksort(a, n);
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
